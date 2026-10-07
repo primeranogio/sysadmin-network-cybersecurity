@@ -174,8 +174,186 @@ WantedBy=default.target
 ```
 
 # Processo periodico
-##
+## Regole Fondamentali sui Timer Systemd
+Abbinamento Nomi (Naming Convention):
+Se il timer e il service hanno lo stesso identico nome base (es. ```extension-sorter.timer``` e ```extension-sorter.service```), la riga ```Unit=extension-sorter.service``` nel file ```.timer``` è facoltativa ma è ottima prassi scriverla esplicitamente.
 
+Sintassi di ```OnCalendar```:
+- Giorni della settimana: ```Mon```, ```Tue```, ```Wed```, ```Thu```, ```Fri```, ```Sat```, ```Sun``` (es. ```Wed,Sat```).
+- Format data/ora: ```GiornoDellaSettimana AAAA-MM-GG HH:MM:SS```
+- Joker / Wildcards (```*```): Usare ```*-*-*``` significa "qualsiasi anno, qualsiasi mese, qualsiasi giorno" (valido se si specificano solo i giorni della settimana o l'orario).
+- Esempi Utili da Memorizzare:
+    - ```*-*-* 00:00:00``` -> Ogni giorno a mezzanotte.
+    - ```Mon *-*-* 08:00:00``` -> Ogni lunedì mattina alle 08:00.
+    - ```*-*-01 04:00:00``` -> Il primo giorno di ogni mese alle 04:00.
+ 
+Comandi per Abilitare un Timer Utente:
+Per mettere in funzione un timer non basta abilitare il servizio, occorre gestire il timer:
+```
+# Ricarica le unità
+systemctl --user daemon-reload
+
+# Abilita ed avvia il TIMER (non il servizio)
+systemctl --user enable extension-sorter.timer
+systemctl --user start extension-sorter.timer
+
+# Verifica la lista dei timer attivi e la prossima esecuzione
+systemctl --user list-timers
+```
+
+## ESEMPIO:
+```
+# path: ~/extension-sorter/app.py
+
+import argparse
+from datetime import datetime
+import os
+import shutil
+import sys
+
+# -------------------------------------------------------------------
+# FUNZIONE RICORSIVA DI SCANSIONE E SPOSTAMENTO
+# -------------------------------------------------------------------
+def walk(target_dir, dest_dir, extensions, log_path):
+    # Elenca il contenuto della directory corrente
+    for filename in os.listdir(target_dir):
+        path = os.path.join(target_dir, filename)
+        
+        # Se è un file normale
+        if os.path.isfile(path):
+            for extension in extensions:
+                # Controlla se il file termina con l'estensione richiesta (es. .pdf)
+                if filename.endswith(f".{extension}"):
+                    target_subdir = os.path.join(dest_dir, extension)
+                    
+                    # Sposta il file nella sottocartella dedicata (es. ~/sorted/pdf)
+                    shutil.move(path, target_subdir)
+                    
+                    # Traccia lo spostamento nel file di log (modalità append "a")
+                    with open(log_path, "a") as log_file:
+                        log_file.write(f"{datetime.now()} {path} {target_subdir}\n")
+                        
+        # Se è una directory, invoca ricorsivamente la funzione per esplorarla
+        elif os.path.isdir(path):
+            walk(path, dest_dir, extensions, log_path)
+
+
+def main():
+    # -------------------------------------------------------------------
+    # 1. PARSING DEGLI ARGOMENTI CLI
+    # -------------------------------------------------------------------
+    parser = argparse.ArgumentParser(description="extension sorter")
+    
+    parser.add_argument(
+        "--path", type=str, required=True, 
+        help="absolute path of the directory to scan"
+    )
+    parser.add_argument(
+        "--dest", type=str, required=True, 
+        help="absolute path of the destination directory"
+    )
+    parser.add_argument(
+        "--extensions", type=str, required=True, 
+        help="comma-separated extensions to monitor"
+    )
+    parser.add_argument(
+        "--log", type=str, required=True, 
+        help="absolute path of the log file"
+    )
+    
+    args = parser.parse_args()
+
+    # -------------------------------------------------------------------
+    # 2. VALIDAZIONE DEGLI INPUT
+    # -------------------------------------------------------------------
+    # Controlli per --path (directory sorgente)
+    if not os.path.isabs(args.path):
+        print(f"error: {args.path} is not an absolute path", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.exists(args.path):
+        print(f"error: {args.path} does not exist", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.isdir(args.path):
+        print(f"error: {args.path} is not a directory", file=sys.stderr)
+        sys.exit(1)
+
+    # Controlli per --dest (directory destinazione)
+    if not os.path.isabs(args.dest):
+        print(f"error: {args.dest} is not an absolute path", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.exists(args.dest):
+        print(f"error: {args.dest} does not exist", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.isdir(args.dest):
+        print(f"error: {args.dest} is not a directory", file=sys.stderr)
+        sys.exit(1)
+
+    # Parsing e validazione della lista di estensioni
+    extensions = args.extensions.split(",")
+    for extension in extensions:
+        if not extension:  # Se l'estensione è vuota (es. "pdf,,txt")
+            print("error: empty extension", file=sys.stderr)
+            sys.exit(1)
+
+    # Controllo per --log (deve essere un percorso assoluto)
+    if not os.path.isabs(args.log):
+        print(f"error: {args.log} is not an absolute path", file=sys.stderr)
+        sys.exit(1)
+
+    # -------------------------------------------------------------------
+    # 3. PREPARAZIONE DELLE DIRECTORY ED ESECUZIONE
+    # -------------------------------------------------------------------
+    # Crea la directory genitrice del file di log se non esiste
+    os.makedirs(os.path.dirname(args.log), exist_ok=True)
+    
+    # Crea le sottocartelle di destinazione per ogni estensione (es. ~/sorted/pdf, ~/sorted/txt)
+    for extension in extensions:
+        os.makedirs(os.path.join(args.dest, extension), exist_ok=True)
+        
+    # Avvia la scansione e lo spostamento
+    walk(args.path, args.dest, extensions, args.log)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+```
+# path: ~/.config/systemd/user/extension-sorter.service
+
+[Unit]
+Description=extension sorter service
+
+[Service]
+# Disabilita il buffering dell'output per scrivere subito nei log di systemd
+Environment=PYTHONUNBUFFERED=1
+
+# Directory di lavoro
+WorkingDirectory=%h/extension-sorter
+
+# Comando da eseguire con tutti i parametri richiesti
+ExecStart=/usr/bin/python3 app.py --path %h/inbox --dest %h/sorted --extensions pdf,txt --log %h/extension-sorter.log
+
+# Nota: Non serve la sezione [Install] qui, perché l'avvio è gestito dal TIMER!
+```
+
+```
+# path: ~/.config/systemd/user/extension-sorter.timer
+
+[Unit]
+Description=extension sorter timer
+
+[Timer]
+# Specifica quale unità .service attivare allo scoccare del timer
+Unit=extension-sorter.service
+
+# Calendario: Mercoledì (Wed) e Sabato (Sat) alle 05:30:00 ( *-*-* indica ogni anno/mese/giorno )
+OnCalendar=Wed,Sat *-*-* 05:30
+
+[Install]
+# Assicura che il timer sia attivo all'avvio dell'ambiente utente
+WantedBy=timers.target
+```
 
 # Filtraggio dei pacchetti e NAT
 ## Ogni comando **iptables** segue una struttura ben precisa:
