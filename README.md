@@ -12,11 +12,12 @@ Repository containing theory, exercises and study notes for the **Systems Admini
 ```
 .
 ├── README.md
-├── THEORY.md
+└── theory/
+|
 └── exercises/
     ├── systems/
     ├── networking/
-    └── cybersecurity/
+    └── previous-exams/
 ```
 
 ## Systems Administration
