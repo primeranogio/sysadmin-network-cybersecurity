@@ -22,6 +22,12 @@ fondamentali per garantire la validità temporale dei log in tutta l'infrastrutt
 i daemon:
     - systemd-journald: gestisce la raccolta e l'archiviazione locale dei messaggi di log in formato binario.
     - rsyslog (rsyslogd): si occupa di inoltrare i messaggi di log a una postazione centralizzata attraverso la rete.
+La centralizzazione è necessaria perché il sistema di logging tradizionale di UNIX (syslog) era
+rudimentale e non copriva tutte le esigenze di gestione dei log su larga scala. Inoltre, l'inoltro dei
+log a un server remoto sicuro impedisce agli aggressori di cancellare le proprie tracce
+manomettendo i file locali su un sistema compromesso. L'uso di NTP assicura che i messaggi
+provenienti da centinaia o migliaia di server diversi abbiano riferimenti temporali coerenti e
+sincronizzati, facilitando l'analisi e il monitoraggio.
 
 ## FLASHCARD
 1) **Perché gli aggressori manomettono i file di log, cos'è FSS e come consente agli
