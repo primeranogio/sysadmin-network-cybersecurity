@@ -12,11 +12,14 @@ Repository containing theory, exercises and study notes for the **Systems Admini
 ```
 .
 ├── README.md
-└── theory/
-|
+├── theory/
 └── exercises/
     ├── systems/
+    |   ├── account-administration/
+    |   ├── daemon/
+    |   └── packet-filtering-and-nat/
     ├── networking/
+    |   └── packet-filtering-and-nat/
     └── previous-exams/
 ```
 
