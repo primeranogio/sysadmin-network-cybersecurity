@@ -5,7 +5,7 @@ Repository containing theory, exercises and study notes for the **Systems Admini
 - Theory
 - Systems Administration
 - Networking
-- Cybersecurity
+- Previous Exams
 
 
 ## Repository Structure
