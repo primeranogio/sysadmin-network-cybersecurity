@@ -6,11 +6,11 @@ Durata esame: 2 ore e 30 minuti.
 
 | Sezione                            | Punti |
 | ---------------------------------- | ----- |
-| Processo periodico (§1)            | 16    |
+| **Processo periodico (§1)**            | 16    |
 | - Script Python (§1.1)             | 8/16  |
 | - Service (§1.2)                   | 4/16  |
 | - Timer (§1.3)                     | 4/16  |
-| Amministrazione degli account (§2) | 8     |
+| **Amministrazione degli account (§2)** | 8     |
 | Domande a risposta aperta (§3)     | 9     |
 
 ### 1. Processo periodico
