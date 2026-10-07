@@ -1,7 +1,4 @@
 # Demone 
-## S
-
-# Processo periodico
 ## Regole per gli Script Python CLI
 Pipelining degli errori (```sys.stderr```):
 I messaggi di errore vanno stampati specificando ```file=sys.stderr```. In questo modo le utility Unix e ```systemd``` possono separare gli output standard dagli errori.
@@ -175,6 +172,10 @@ RestartSec=5
 # Assicura che il servizio parte automaticamente all'avvio della sessione utente
 WantedBy=default.target
 ```
+
+# Processo periodico
+##
+
 
 # Filtraggio dei pacchetti e NAT
 ## Ogni comando **iptables** segue una struttura ben precisa:
