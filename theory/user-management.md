@@ -6,8 +6,8 @@ Un amministratore può impostare una password iniziale per un nuovo account util
 Un amministratore può bloccare temporaneamente l'accesso di un utente utilizzando il comando usermod -L (lock) e sbloccarlo con usermod -U (unlock). A livello di sistema, questo comando inserisce un punto esclamativo (!) all'inizio della password cifrata (hash) dell'utente all'interno del file /etc/shadow.
 
 L'aggiunta del carattere ! rende l'hash della password non valido, facendo fallire ogni tentativo di login basato su password. Tuttavia, questo approccio presenta dei limiti significativi:
-- Mancanza di feedback: L'utente non riceve alcuna notifica del blocco né una spiegazione del motivo per cui l'account non funziona più.
-- Accessi alternativi: Il blocco della password non impedisce l'accesso tramite metodi che non la richiedono esplicitamente, come ad esempio le connessioni SSH basate su chiavi pubbliche, che potrebbero continuare a funzionare nonostante il blocco in /etc/shadow.
+- **Mancanza di feedback**: L'utente non riceve alcuna notifica del blocco né una spiegazione del motivo per cui l'account non funziona più.
+- **Accessi alternativi**: Il blocco della password non impedisce l'accesso tramite metodi che non la richiedono esplicitamente, come ad esempio le connessioni SSH basate su chiavi pubbliche, che potrebbero continuare a funzionare nonostante il blocco in /etc/shadow.
 
 ## FLASHCARD
 ### 14. Come può un amministratore impostare una password iniziale per un nuovo account, perché è rischioso rimandare questa operazione al primo login dell'utente e quale approccio è raccomandato?
