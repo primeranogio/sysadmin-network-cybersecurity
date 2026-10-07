@@ -6,10 +6,10 @@ Durata esame: 2 ore e 30 minuti.
 
 | Sezione                             | Punti |
 | ----------------------------------- | ----- |
-| Demone (§1)                         | 16    |
+| **Demone (§1)**                         | 16    |
 | - Script Python (§1.1)              | 10/16 |
 | - Service (§1.2)                    | 6/16  |
-| Filtraggio dei pacchetti e NAT (§2) | 8     |
+| **Filtraggio dei pacchetti e NAT (§2)** | 8     |
 | Domande a risposta aperta (§3)      | 9     |
 
 Per stampare:
