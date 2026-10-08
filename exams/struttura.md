@@ -1026,21 +1026,6 @@ Questa è la tabella che terrei davanti mentre studi.
 ---
 
 # 7. MA SOPRATTUTTO: COSA DEVI FARE QUANDO TI DANNO LA TRACCIA
-
-Dato che **all'esame sai già la categoria**, non devi fare:
-
-```text
-"È un demone?"
-"È un processo periodico?"
-"È NAT?"
-```
-
-Quello lo sai già.
-
-Devi invece fare:
-
----
-
 ## SE È UN DEMONE
 
 ```text
@@ -1261,7 +1246,7 @@ CHI HOST = (USER) [NOPASSWD:] CMD
 
 # 9. E LA DISTINZIONE PIÙ IMPORTANTE DI TUTTE
 
-Vorrei che questi quattro concetti diventassero quasi automatici:
+Quattro concetti quasi automatici:
 
 ### DEMONE
 
