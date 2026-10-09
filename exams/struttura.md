@@ -910,6 +910,7 @@ Poi:
 ```sudoers
 %acct WEB = (root) ACCTMGM
 ```
+Dove ACCTMGM è un Cmnd_Alias ovvero Cmnd_Alias ACCTMGM = /usr/sbin/useradd, usr/sbin/usermod
 
 ---
 
